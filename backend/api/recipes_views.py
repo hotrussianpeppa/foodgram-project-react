@@ -1,24 +1,19 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import mixins, status, viewsets
+from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from django.db.models import Sum
 from django.shortcuts import HttpResponse, get_object_or_404
 
+from .recipes_serializers import (FavoriteSerializer, IngredientSerializer,
+                                  RecipeCreateSerializer, RecipeGetSerializer,
+                                  ShoppingCartSerializer, TagSerialiser,)
 from api.filters import IngredientFilter, RecipeFilter
 from api.permissions import IsAdminAuthorOrReadOnly
-from api.serializers import (FavoriteSerializer, IngredientSerializer,
-                             RecipeCreateSerializer, RecipeGetSerializer,
-                             ShoppingCartSerializer, TagSerialiser,
-                             UserSubscribeRepresentSerializer,
-                             UserSubscribeSerializer,)
 from api.utils import create_model_instance, delete_model_instance
 from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag,)
-from users.models import Subscription, User
 
 
 class RecipeViewSet(mixins.CreateModelMixin,
@@ -138,48 +133,3 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend, )
     filterset_class = IngredientFilter
     pagination_class = None
-
-
-class UserSubscribeView(APIView):
-    """Класс, отвечающий за подписку пользователя на автора."""
-    def post(self, request, user_id):
-        """
-        Метод, выполняющий подписку пользователя на автора
-        """
-        author = get_object_or_404(User, id=user_id)
-        serializer = UserSubscribeSerializer(
-            data={'user': request.user.id, 'author': author.id},
-            context={'request': request}
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def delete(self, request, user_id):
-        """Метод, выполняющий отписку пользователя от автора."""
-        author = get_object_or_404(User, id=user_id)
-        if not Subscription.objects.filter(
-            user=request.user,
-            author=author
-        ).exists():
-            return Response(
-                {'errors': 'Вы не подписаны на этого пользователя'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        Subscription.objects.get(
-            user=request.user.id,
-            author=user_id
-        ).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class UserSubscriptionsViewSet(
-    mixins.ListModelMixin,
-    viewsets.GenericViewSet
-):
-    """Класс возвращает подписчиков пользователя."""
-    serializer_class = UserSubscribeRepresentSerializer
-    permission_classes = [IsAuthenticated]  # Теперь управляется :))
-
-    def get_queryset(self):
-        return User.objects.filter(following__user=self.request.user)
