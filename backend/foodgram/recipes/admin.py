@@ -1,13 +1,8 @@
 from django.conf import settings
 from django.contrib import admin
-from recipes.models import (
-    Favorite,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    ShoppingCart,
-    Tag,
-)
+
+from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                            ShoppingCart, Tag,)
 
 
 @admin.register(ShoppingCart)
@@ -19,6 +14,8 @@ class ShoppingCartAdmin(admin.ModelAdmin):
 
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
+    extra = 2
+    min_num = 1
 
 
 @admin.register(Recipe)
@@ -30,7 +27,9 @@ class RecipeAdmin(admin.ModelAdmin):
     inlines = [
         RecipeIngredientInline,
     ]
+    filter_horizontal = ('tags', )
 
+    @admin.display(description='количество фолловеров данного шедевра')
     def favorites_amount(self, obj):
         return obj.favorites.count()
 

@@ -1,22 +1,18 @@
-from api.utils import Base64ImageField, create_ingredients
-from django.db import transaction
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from recipes.models import (
-    Favorite,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    ShoppingCart,
-    Tag,
-)
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
+
+from django.db import transaction
+
+from api.utils import Base64ImageField, create_ingredients
+from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                            ShoppingCart, Tag,)
 from users.models import Subscription, User
 
 
 class UserGetSerializer(UserSerializer):
     """Сериализатор для работы с информацией о пользователях."""
-    is_subscribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.ReadOnlyField()
 
     class Meta:
         model = User
@@ -47,17 +43,10 @@ class UserSubscribeRepresentSerializer(UserGetSerializer):
             'email', 'id', 'username', 'first_name',
             'last_name', 'is_subscribed', 'recipes', 'recipes_count'
         )
-        read_only_fields = (
-            'email', 'username', 'first_name', 'last_name',
-            'is_subscribed', 'recipes', 'recipes_count'
-        )
 
     def get_recipes(self, obj):
         request = self.context.get('request')
-        recipes_limit = None
-        if request:
-            recipes_limit = request.query_params.get('recipes_limit')
-        recipes = obj.recipes.all()
+        recipes_limit = request.query_params.get('recipes_limit')
         if recipes_limit:
             recipes = obj.recipes.all()[:int(recipes_limit)]
         return RecipeSmallSerializer(
@@ -234,15 +223,15 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             'name', 'text', 'cooking_time'
         )
 
-    def validate(self, data):
+    def validate(self, value):
         ingredients_list = []
-        for ingredient in data.get('recipeingredients'):
+        for ingredient in value:
             ingredients_list.append(ingredient.get('id'))
         if len(set(ingredients_list)) != len(ingredients_list):
             raise serializers.ValidationError(
                 'Вы пытаетесь добавить в рецепт два одинаковых ингредиента'
             )
-        return data
+        return value
 
     @transaction.atomic
     def create(self, validated_data):
@@ -250,6 +239,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('recipeingredients')
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(author=request.user, **validated_data)
+        recipe.tags.clear()
         recipe.tags.set(tags)
         create_ingredients(ingredients, recipe)
         return recipe
@@ -260,7 +250,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         instance.tags.clear()
         instance.tags.set(tags)
-        RecipeIngredient.objects.filter(recipe=instance).delete()
+        instance.recipeingredient_set.clear()
         super().update(instance, validated_data)
         create_ingredients(ingredients, instance)
         instance.save()

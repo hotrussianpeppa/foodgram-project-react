@@ -1,16 +1,18 @@
-from django.core.validators import MinValueValidator
+from django.conf import settings
+from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
+
 from users.models import User
 
 
 class Ingredient(models.Model):
     name = models.CharField(
         'Имя',
-        max_length=200,
+        max_length=settings.REPEATING_DIGIT,
     )
     measurement_unit = models.CharField(
         'Единица измерения',
-        max_length=200,
+        max_length=settings.REPEATING_DIGIT,
     )
 
     class Meta:
@@ -24,17 +26,18 @@ class Ingredient(models.Model):
 class Tag(models.Model):
     name = models.CharField(
         'Имя',
-        max_length=200,
+        max_length=settings.REPEATING_DIGIT,
         unique=True
     )
     color = models.CharField(
         'Цвет',
         max_length=7,
-        unique=True
+        unique=True,
+        validators=[RegexValidator('^#([A-Fa-f0-9]{6})$')]
     )
     slug = models.SlugField(
         'Слаг',
-        max_length=200,
+        max_length=settings.REPEATING_DIGIT,
         unique=True
     )
 
@@ -55,12 +58,11 @@ class Recipe(models.Model):
     )
     name = models.CharField(
         'Имя',
-        max_length=200,
+        max_length=settings.REPEATING_DIGIT,
     )
     image = models.ImageField(
         'Картинка',
         upload_to='recipes/',
-        blank=True,
     )
     text = models.TextField(
         'Текст',
@@ -84,7 +86,6 @@ class Recipe(models.Model):
     )
 
     class Meta:
-        ordering = ['-id']
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
@@ -135,7 +136,6 @@ class Favorite(models.Model):
     )
 
     class Meta:
-        ordering = ['-id']
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
@@ -164,7 +164,6 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
-        ordering = ['-id']
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],

@@ -21,13 +21,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users.apps.UsersConfig',
-    'recipes.apps.RecipesConfig',
-    'api.apps.ApiConfig',
+
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
     'djoser',
+
+    'users.apps.UsersConfig',
+    'recipes.apps.RecipesConfig',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
@@ -126,6 +128,7 @@ REST_FRAMEWORK = {
 }
 
 EMPTY_VALUE = 'тишина'
+REPEATING_DIGIT = 200
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
