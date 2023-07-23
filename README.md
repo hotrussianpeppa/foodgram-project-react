@@ -18,6 +18,7 @@ ip: 84.252.137.103
 
 данные от суперюзера:
 login: hrp
+email: bks@gmail.com
 pass: Ae@mae45
 -->
 
