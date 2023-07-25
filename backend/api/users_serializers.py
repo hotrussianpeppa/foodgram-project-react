@@ -28,6 +28,11 @@ class UserSignUpSerializer(UserCreateSerializer):
             'last_name', 'password'
         )
 
+    def validate_username(self, value):
+        if value.lower() == 'me':
+            raise serializers.ValidationError("Обмануть меня хочешь? :)")
+        return value
+
 
 class UserGetSerializer(UserSerializer):
     """Сериализатор для работы с информацией о пользователях."""
