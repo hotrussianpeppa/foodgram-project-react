@@ -3,77 +3,13 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from django.db import transaction
 
-from api.users_serializers import RecipeSmallSerializer, UserGetSerializer
-from api.utils import Base64ImageField, create_ingredients
-from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                            ShoppingCart, Tag,)
-
-
-class IngredientSerializer(serializers.ModelSerializer):
-    """Сериализатор для работы с ингредиентами."""
-    class Meta:
-        model = Ingredient
-        fields = '__all__'
-
-
-class TagSerialiser(serializers.ModelSerializer):
-    """Сериализатор для работы с тегами."""
-    class Meta:
-        model = Tag
-        fields = '__all__'
-
-
-class IngredientGetSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для получения информации об ингредиентах.
-
-    Используется при работе с рецептами.
-    """
-    id = serializers.IntegerField(source='ingredient.id', read_only=True)
-    name = serializers.CharField(source='ingredient.name', read_only=True)
-    measurement_unit = serializers.CharField(
-        source='ingredient.measurement_unit',
-        read_only=True
-    )
-
-    class Meta:
-        model = RecipeIngredient
-        fields = ('id', 'name', 'measurement_unit', 'amount')
-
-
-class IngredientPostSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для добавления ингредиентов.
-
-    Используется при работе с рецептами.
-    """
-    id = serializers.IntegerField()
-    amount = serializers.IntegerField()
-
-    class Meta:
-        model = RecipeIngredient
-        fields = ('id', 'amount')
-
-
-class ShoppingCartSerializer(serializers.ModelSerializer):
-    """Сериализатор для работы со списком покупок."""
-    class Meta:
-        model = ShoppingCart
-        fields = '__all__'
-        validators = [
-            UniqueTogetherValidator(
-                queryset=ShoppingCart.objects.all(),
-                fields=('user', 'recipe'),
-                message='Рецепт уже добавлен в список покупок'
-            )
-        ]
-
-    def to_representation(self, instance):
-        request = self.context.get('request')
-        return RecipeSmallSerializer(
-            instance.recipe,
-            context={'request': request}
-        ).data
+from api.ingredients.ingredients_serializers import (IngredientGetSerializer,
+                                                     IngredientPostSerializer,)
+from api.tags.tags_serializers import TagSerialiser
+from api.users.users_serializers import (RecipeSmallSerializer,
+                                         UserGetSerializer,)
+from api.utils.utils import Base64ImageField, create_ingredients
+from recipes.models import Favorite, Recipe, ShoppingCart, Tag
 
 
 class RecipeGetSerializer(serializers.ModelSerializer):

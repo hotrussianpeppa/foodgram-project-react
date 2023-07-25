@@ -1,19 +1,19 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from django.db.models import Sum
 from django.shortcuts import HttpResponse, get_object_or_404
 
-from api.filters import IngredientFilter, RecipeFilter
-from api.permissions import IsAdminAuthorOrReadOnly
-from api.recipes_serializers import (FavoriteSerializer, IngredientSerializer,
-                                     RecipeCreateSerializer,
-                                     RecipeGetSerializer,
-                                     ShoppingCartSerializer, TagSerialiser,)
-from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
+from api.recipes.recipes_serializers import (FavoriteSerializer,
+                                             RecipeCreateSerializer,
+                                             RecipeGetSerializer,)
+from api.shoppingcart.shoppingcart_serializers import ShoppingCartSerializer
+from api.utils.filters import RecipeFilter
+from api.utils.permissions import IsAdminAuthorOrReadOnly
+from recipes.models import Recipe, RecipeIngredient
 
 
 class RecipeViewSet(mixins.CreateModelMixin,
@@ -126,21 +126,3 @@ class RecipeViewSet(mixins.CreateModelMixin,
         response['Content-Disposition'] = \
             'attachment; filename="shopping_cart.txt"'
         return response
-
-
-class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    """Отображение инфо о теге."""
-    queryset = Tag.objects.all()
-    serializer_class = TagSerialiser
-    permission_classes = (AllowAny, )
-    pagination_class = None
-
-
-class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    """Класс представления об ингредиентах."""
-    queryset = Ingredient.objects.all()
-    serializer_class = IngredientSerializer
-    permission_classes = (AllowAny, )
-    filter_backends = (DjangoFilterBackend, )
-    filterset_class = IngredientFilter
-    pagination_class = None
