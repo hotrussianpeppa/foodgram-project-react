@@ -6,6 +6,9 @@ from recipes.models import Recipe
 from users.models import Subscription, User
 
 
+# Тут так цикличность и ловлю, если она в рецептах
+# в сериализере лежит... Учитель, дайте совет,
+# Что с ним делать блин )))
 class RecipeSmallSerializer(serializers.ModelSerializer):
     """Сериализатор для работы с краткой информацией о рецепте."""
     class Meta:

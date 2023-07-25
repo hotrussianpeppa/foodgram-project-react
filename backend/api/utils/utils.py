@@ -6,7 +6,8 @@ from rest_framework.response import Response
 from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
 
-from recipes.models import Ingredient, RecipeIngredient
+from ingredients.models import Ingredient
+from recipes.models import RecipeIngredient
 
 
 class Base64ImageField(serializers.ImageField):

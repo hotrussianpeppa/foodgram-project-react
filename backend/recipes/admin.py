@@ -1,10 +1,7 @@
-from import_export.admin import ImportExportModelAdmin
-
 from django.conf import settings
 from django.contrib import admin
 
-from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                            ShoppingCart, Tag,)
+from recipes.models import Favorite, Recipe, RecipeIngredient, ShoppingCart
 
 
 @admin.register(ShoppingCart)
@@ -36,14 +33,6 @@ class RecipeAdmin(admin.ModelAdmin):
         return obj.favorites.count()
 
 
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'name', 'color', 'slug')
-    search_fields = ('name', 'color', 'slug')
-    list_filter = ('name', 'color', 'slug')
-    empty_value_display = settings.EMPTY_VALUE
-
-
 @admin.register(RecipeIngredient)
 class RecipeIngredientAdmin(admin.ModelAdmin):
     list_display = ('pk', 'recipe', 'ingredient', 'amount')
@@ -54,12 +43,4 @@ class RecipeIngredientAdmin(admin.ModelAdmin):
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('pk', 'user', 'recipe')
     search_fields = ('user', 'recipe')
-    empty_value_display = settings.EMPTY_VALUE
-
-
-@admin.register(Ingredient)
-class IngredientAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ('pk', 'name', 'measurement_unit')
-    search_fields = ('name',)
-    list_filter = ('name',)
     empty_value_display = settings.EMPTY_VALUE

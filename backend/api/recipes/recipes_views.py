@@ -7,9 +7,11 @@ from rest_framework.response import Response
 from django.db.models import Sum
 from django.shortcuts import HttpResponse, get_object_or_404
 
-from api.recipes.recipes_serializers import (FavoriteSerializer,
-                                             RecipeCreateSerializer,
-                                             RecipeGetSerializer,)
+from api.recipes.recipes_serializers import (
+    FavoriteSerializer,
+    RecipeCreateSerializer,
+    RecipeGetSerializer,
+)
 from api.shoppingcart.shoppingcart_serializers import ShoppingCartSerializer
 from api.utils.filters import RecipeFilter
 from api.utils.permissions import IsAdminAuthorOrReadOnly

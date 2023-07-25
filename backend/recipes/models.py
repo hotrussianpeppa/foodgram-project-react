@@ -1,52 +1,10 @@
 from django.conf import settings
-from django.core.validators import MinValueValidator, RegexValidator
+from django.core.validators import MinValueValidator
 from django.db import models
 
+from ingredients.models import Ingredient
+from tags.models import Tag
 from users.models import User
-
-
-class Ingredient(models.Model):
-    name = models.CharField(
-        'Имя',
-        max_length=settings.REPEATING_DIGIT,
-    )
-    measurement_unit = models.CharField(
-        'Единица измерения',
-        max_length=settings.REPEATING_DIGIT,
-    )
-
-    class Meta:
-        verbose_name = 'Ингредиент'
-        verbose_name_plural = 'Ингредиенты'
-
-    def __str__(self):
-        return self.name
-
-
-class Tag(models.Model):
-    name = models.CharField(
-        'Имя',
-        max_length=settings.REPEATING_DIGIT,
-        unique=True
-    )
-    color = models.CharField(
-        'Цвет',
-        max_length=7,
-        unique=True,
-        validators=[RegexValidator('^#([A-Fa-f0-9]{3}){1,2}$')]
-    )
-    slug = models.SlugField(
-        'Слаг',
-        max_length=settings.REPEATING_DIGIT,
-        unique=True
-    )
-
-    class Meta:
-        verbose_name = 'Тег'
-        verbose_name_plural = 'Теги'
-
-    def __str__(self):
-        return self.name
 
 
 class Recipe(models.Model):

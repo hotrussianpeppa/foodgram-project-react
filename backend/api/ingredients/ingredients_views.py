@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny
 
 from api.ingredients.ingredients_serializers import IngredientSerializer
 from api.utils.filters import IngredientFilter
-from recipes.models import Ingredient
+from ingredients.models import Ingredient
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):

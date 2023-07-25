@@ -3,13 +3,18 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from django.db import transaction
 
-from api.ingredients.ingredients_serializers import (IngredientGetSerializer,
-                                                     IngredientPostSerializer,)
+from api.ingredients.ingredients_serializers import (
+    IngredientGetSerializer,
+    IngredientPostSerializer,
+)
 from api.tags.tags_serializers import TagSerialiser
-from api.users.users_serializers import (RecipeSmallSerializer,
-                                         UserGetSerializer,)
+from api.users.users_serializers import (
+    RecipeSmallSerializer,
+    UserGetSerializer,
+)
 from api.utils.utils import Base64ImageField, create_ingredients
-from recipes.models import Favorite, Recipe, ShoppingCart, Tag
+from recipes.models import Favorite, Recipe, ShoppingCart
+from tags.models import Tag
 
 
 class RecipeGetSerializer(serializers.ModelSerializer):
