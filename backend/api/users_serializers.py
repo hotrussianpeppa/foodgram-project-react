@@ -17,7 +17,7 @@ class UserSignUpSerializer(UserCreateSerializer):
     """Сериализатор для регистрации пользователей."""
 
     def validate_username(self, value):
-        if value.lower() == 'me':
+        if value.lower() == "me":
             raise serializers.ValidationError("Обмануть меня хочешь? :)")
         return value
 

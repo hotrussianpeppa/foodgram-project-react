@@ -129,15 +129,31 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             'name', 'text', 'cooking_time'
         )
 
-    def validate(self, data):
-        ingredients_list = []
-        for ingredient in data.get('recipeingredients'):
-            ingredients_list.append(ingredient.get('id'))
-        if len(set(ingredients_list)) != len(ingredients_list):
+    def validate_ingredients(self, ingredients):
+        """Валидация ингредиентов."""
+        ingredients_list = [ingredient['id'] for ingredient in ingredients]
+        for ingredient in ingredients_list:
+            if ingredients_list.count(ingredient) > 1:
+                raise serializers.ValidationError(
+                    'Вы пытаетесь добавить в рецепт два одинаковых ингредиента'
+                )
+        return ingredients
+
+    def validate_cooking_time(self, cooking_time):
+        """Валидация времени приготовления."""
+        if cooking_time < 1:
             raise serializers.ValidationError(
-                'Вы пытаетесь добавить в рецепт два одинаковых ингредиента'
+                'Время приготовления должно быть не меньше 1 минуты.'
             )
-        return data
+        return cooking_time
+
+    def validate_tags(self, tags):
+        """Валидация списка тегов."""
+        if len(tags) < 1:
+            raise serializers.ValidationError(
+                'Выберите минимум один тег.'
+            )
+        return tags
 
     @transaction.atomic
     def create(self, validated_data):
