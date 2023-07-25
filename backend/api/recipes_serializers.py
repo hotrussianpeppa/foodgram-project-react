@@ -139,47 +139,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             )
         return data
 
-# Учитель, пытался поправить функцию по замечанию, но что бы я не делал, как бы
-# не пытался, у меня переставала работать кнопка добавления рецептов,
-# я уже и пачку перелистал всю и гугл перерыл и студентов спрашивал -
-# никто не знает почему так... Ниже варианты решения оставил на всякий случай.
-# Если можно, оставьте подсказку :)
-
-    # def validate(self, data):
-    #     ingredients = self.context.get('ingredient')
-    #     if len(ingredients) <= 0:
-    #         raise serializers.ValidationError(
-    #             {'ingredients': ('Убедитесь, что хотя бы один '
-    #                              'ингредиент добавлен')})
-    #     ingredients_data = []
-    #     for ingredient_item in ingredients:
-    #         if ingredient_item['id'] in ingredients_data:
-    #             raise serializers.ValidationError(
-    #                 {'ingredient_item': (
-    #                     'Убедитесь, что ингредиент не дублируется')})
-    #         ingredients_data.append(ingredient_item['id'])
-    #         if int(ingredient_item['amount']) <= 0:
-    #             raise serializers.ValidationError({
-    #                 'ingredients': ('Убедитесь, что значение количества '
-    #                                 'ингредиента больше 0.')
-    #             })
-    #     return data
-
-    # def validate_recipeingredients(self, recipeingredients):
-    #     ingredients_list = []
-    #     for ingredient in recipeingredients:
-    #         ingredients_list.append(ingredient.get('id'))
-    #     if len(set(ingredients_list)) != len(ingredients_list):
-    #         raise serializers.ValidationError(
-    #             'Вы пытаетесь добавить в рецепт два одинаковых ингредиента'
-    #         )
-    #     return recipeingredients
-
-    # def validate(self, data):
-    #     validated_data = super().validate(data)
-    #     self.validate_recipeingredients(validated_data.get('recipeingredients'))
-    #     return validated_data
-
     @transaction.atomic
     def create(self, validated_data):
         request = self.context.get('request')
