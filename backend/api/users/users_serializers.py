@@ -19,6 +19,15 @@ class RecipeSmallSerializer(serializers.ModelSerializer):
 class UserSignUpSerializer(UserCreateSerializer):
     """Сериализатор для регистрации пользователей."""
 
+    class Meta:
+        model = User
+        fields = (
+            'email', 'id', 'username', 'first_name',
+            'last_name', 'password'
+        )
+# Если здесь убираю переопределение класса Meta, то слетает регистрация
+# новых пользователей.
+
     def validate_username(self, value):
         if value.lower() == "me":
             raise serializers.ValidationError("Обмануть меня хочешь? :)")
