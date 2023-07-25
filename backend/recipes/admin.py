@@ -1,3 +1,5 @@
+from import_export.admin import ImportExportModelAdmin
+
 from django.conf import settings
 from django.contrib import admin
 
@@ -56,7 +58,7 @@ class FavoriteAdmin(admin.ModelAdmin):
 
 
 @admin.register(Ingredient)
-class IngredientAdmin(admin.ModelAdmin):
+class IngredientAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('pk', 'name', 'measurement_unit')
     search_fields = ('name',)
     list_filter = ('name',)

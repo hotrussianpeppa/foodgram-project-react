@@ -13,11 +13,27 @@ class SubscriptionAdmin(admin.ModelAdmin):
     search_fields = ('user', 'author')
     list_filter = ('user', 'author')
     empty_value_display = settings.EMPTY_VALUE
+    verbose_name = 'Подписка'
 
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'email', 'username', 'first_name', 'last_name')
+    list_display = (
+        'pk', 'email', 'username', 'first_name', 'last_name')
     search_fields = ('username', 'email', 'first_name', 'last_name')
     list_filter = ('username', 'email')
     empty_value_display = settings.EMPTY_VALUE
+    verbose_name = 'Пользователь'
+
+    fieldsets = (
+        ('Персональная информация', {'fields': (
+            'email', 'username', 'first_name', 'last_name', 'password'
+        )}),
+        ('Разрешения', {'fields': (
+            'is_active', 'is_staff', 'is_superuser',
+            'groups', 'user_permissions'
+        )}),
+        ('Важные даты/история', {'fields': ('last_login', 'date_joined')}),
+    )
+
+    ordering = ('-date_joined',)

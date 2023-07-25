@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_filters',
     'djoser',
+    'import_export',
 
     'users.apps.UsersConfig',
     'recipes.apps.RecipesConfig',
@@ -143,3 +144,5 @@ DJOSER = {
         'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
     }
 }
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True
