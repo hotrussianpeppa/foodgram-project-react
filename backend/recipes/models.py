@@ -33,7 +33,7 @@ class Tag(models.Model):
         'Цвет',
         max_length=7,
         unique=True,
-        validators=[RegexValidator('^#([A-Fa-f0-9]{6})$')]
+        validators=[RegexValidator('^#([A-Fa-f0-9]{3}){1,2}$')]
     )
     slug = models.SlugField(
         'Слаг',
