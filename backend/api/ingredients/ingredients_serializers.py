@@ -41,3 +41,11 @@ class IngredientPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecipeIngredient
         fields = ('id', 'amount')
+
+
+# Учитель, поправил всё вроде бы.
+# Так я кайфанул с этой работы, тяжело, но
+# смотрю сейчас и так доволен результатом.
+# Спасибо огромное!!! Кайфую вообще.
+# Не зря всем говорил, что у меня ревьюер лучший
+# Все 9 месяцев!!!
