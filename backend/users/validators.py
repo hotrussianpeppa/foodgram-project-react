@@ -11,6 +11,3 @@ def validate_username(value):
         username_validator(value)
     except ValidationError:
         raise ValidationError("Некорректное имя пользователя.")
-
-# Учитель, не было проверки на me. Не могли создать,
-# потому что такой юзер уже был создан я думаю. :)
