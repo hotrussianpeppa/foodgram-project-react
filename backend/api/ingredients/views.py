@@ -2,7 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 
-from api.ingredients.ingredients_serializers import IngredientSerializer
+from api.ingredients.serializers import IngredientSerializer
 from api.utils.filters import IngredientFilter
 from ingredients.models import Ingredient
 

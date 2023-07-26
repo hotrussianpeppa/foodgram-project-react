@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 
-from .tags_serializers import TagSerialiser
+from .serializers import TagSerialiser
 from tags.models import Tag
 
 

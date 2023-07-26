@@ -3,12 +3,12 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from django.db import transaction
 
-from api.ingredients.ingredients_serializers import (
+from api.ingredients.serializers import (
     IngredientGetSerializer,
     IngredientPostSerializer,
 )
-from api.tags.tags_serializers import TagSerialiser
-from api.users.users_serializers import (
+from api.tags.serializers import TagSerialiser
+from api.users.serializers import (
     RecipeSmallSerializer,
     UserGetSerializer,
 )

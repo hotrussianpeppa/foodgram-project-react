@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 
 from django.shortcuts import get_object_or_404
 
-from api.users.users_serializers import (
+from api.users.serializers import (
     UserSubscribeRepresentSerializer,
     UserSubscribeSerializer,
 )
