@@ -6,9 +6,6 @@ from recipes.models import Recipe
 from users.models import Subscription, User
 
 
-# Тут так цикличность и ловлю, если она в рецептах
-# в сериализере лежит... Учитель, дайте совет,
-# Что с ним делать блин )))
 class RecipeSmallSerializer(serializers.ModelSerializer):
     """Сериализатор для работы с краткой информацией о рецепте."""
     class Meta:
@@ -25,8 +22,6 @@ class UserSignUpSerializer(UserCreateSerializer):
             'email', 'id', 'username', 'first_name',
             'last_name', 'password'
         )
-# Если здесь убираю переопределение класса Meta, то слетает регистрация
-# новых пользователей.
 
     def validate_username(self, value):
         if value.lower() == "me":
