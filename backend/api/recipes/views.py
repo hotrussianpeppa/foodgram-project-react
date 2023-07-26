@@ -37,7 +37,7 @@ class RecipeViewSet(mixins.CreateModelMixin,
             return RecipeGetSerializer
         return RecipeCreateSerializer
 
-    def action_delete(self, pk, serializer_class):
+    def _action_delete(self, pk, serializer_class):
         """
         Метод для удаления.
 
@@ -50,16 +50,15 @@ class RecipeViewSet(mixins.CreateModelMixin,
             user=user,
             recipe=recipe
         )
-        if self.request.method == 'DELETE':
-            if not object.exists():
-                return Response(
-                    {'error': 'У вас нет этого рецепта где-либо :).'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+        if not object.exists():
+            return Response(
+                {'error': 'У вас нет этого рецепта где-либо :).'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         object.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def action_post(self, pk, serializer_class):
+    def _action_post(self, pk, serializer_class):
         """
         Метод для добавления.
 
@@ -84,12 +83,12 @@ class RecipeViewSet(mixins.CreateModelMixin,
     )
     def favorite(self, request, pk=None):
         """Добавляет рецепт в избранное."""
-        return self.action_post(pk, FavoriteSerializer)
+        return self._action_post(pk, FavoriteSerializer)
 
     @favorite.mapping.delete
     def favorite_delete(self, request, pk=None):
         """Удаляет рецепт из избранного."""
-        return self.action_delete(pk, FavoriteSerializer)
+        return self._action_delete(pk, FavoriteSerializer)
 
     @action(
         methods=['POST'], detail=True,
@@ -97,30 +96,39 @@ class RecipeViewSet(mixins.CreateModelMixin,
     )
     def shopping_cart(self, request, pk=None):
         """Добавляет рецепт в список покупок."""
-        return self.action_post(pk, ShoppingCartSerializer)
+        return self._action_post(pk, ShoppingCartSerializer)
 
     @shopping_cart.mapping.delete
     def shopping_cart_delete(self, request, pk=None):
         """Удаляет рецепт из списка покупок."""
-        return self.action_delete(pk, ShoppingCartSerializer)
+        return self._action_delete(pk, ShoppingCartSerializer)
 
-    @action(detail=False,
-            methods=['get'],
-            permission_classes=[IsAuthenticated, ])
+    @action(
+        detail=False,
+        methods=['get'],
+        permission_classes=[IsAuthenticated, ]
+    )
     def download_shopping_cart(self, request):
         """Скачивает список покупок в виде текстового файла."""
+        def create_shopping_list(ingredients):
+            shopping_list = ['Список покупок:\n']
+            for ingredient in ingredients:
+                name = ingredient['ingredient__name']
+                unit = ingredient['ingredient__measurement_unit']
+                amount = ingredient['ingredient_amount']
+                shopping_list.append(f'\n{name} - {amount}, {unit}')
+            return shopping_list
+
         ingredients = RecipeIngredient.objects.filter(
             recipe__carts__user=request.user
         ).values(
             'ingredient__name', 'ingredient__measurement_unit'
         ).annotate(ingredient_amount=Sum('amount'))
-        shopping_list = ['Список покупок:\n']
-        for ingredient in ingredients:
-            name = ingredient['ingredient__name']
-            unit = ingredient['ingredient__measurement_unit']
-            amount = ingredient['ingredient_amount']
-            shopping_list.append(f'\n{name} - {amount}, {unit}')
+
+        shopping_list = create_shopping_list(ingredients)
+
         response = HttpResponse(shopping_list, content_type='text/plain')
-        response['Content-Disposition'] = \
-            'attachment; filename="shopping_cart.txt"'
+        response[
+            'Content-Disposition'
+        ] = 'attachment; filename="shopping_cart.txt"'
         return response

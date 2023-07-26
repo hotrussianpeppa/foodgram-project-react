@@ -97,11 +97,11 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def validate_ingredients(self, ingredients):
         """Валидация ингредиентов."""
-        if not ingredients:
-            raise serializers.ValidationError(
-                'Петрушки в долг не желаете ? xD'
-            )
         ingredients_list = [ingredient['id'] for ingredient in ingredients]
+        if any(ingredient.get('amount') < 1 for ingredient in ingredients):
+            raise serializers.ValidationError(
+                'Петрушки в долг не желаете ? :)'
+            )
         for ingredient in ingredients_list:
             if ingredients_list.count(ingredient) > 1:
                 raise serializers.ValidationError(
