@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from django.db.models import Sum
 from django.shortcuts import HttpResponse, get_object_or_404
 
+from .mixins import PatchModelMixin
 from api.recipes.serializers import (
     FavoriteSerializer,
     RecipeCreateSerializer,
@@ -21,7 +22,7 @@ from recipes.models import Recipe, RecipeIngredient
 class RecipeViewSet(mixins.CreateModelMixin,
                     mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
-                    mixins.UpdateModelMixin,
+                    PatchModelMixin,
                     mixins.DestroyModelMixin,
                     viewsets.GenericViewSet):
     """ViewSet для работы с рецептами."""
@@ -29,11 +30,6 @@ class RecipeViewSet(mixins.CreateModelMixin,
     permission_classes = (IsAdminAuthorOrReadOnly, )
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-
-    def partial_update(self, request, *args, **kwargs):
-        """Частичное обновление рецепта."""
-        kwargs['partial'] = True
-        return self.update(request, *args, **kwargs)
 
     def get_serializer_class(self):
         """Возвращает класс сериализатора в зависимости от действия."""
